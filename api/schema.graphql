@@ -1,0 +1,96 @@
+# Models
+type User {
+    id: ID!
+    username: String
+    maps: [Map!]!
+    linkedApps(type: AppType): [LinkedApp!]!
+}
+
+type LinkedApp {
+    type: AppType!
+
+    accessToken: String
+    tokenExpiry: String
+
+    userId: String
+    username: String
+}
+
+type Map {
+    id: ID!
+
+    title: String!
+    flagshipId: String
+    author: User!
+    public: Boolean!
+
+    knots: [Knot!]!
+    links: [Link!]!
+}
+
+input MapInput {
+    title: String
+    public: Boolean
+    flagshipId: String
+}
+
+input MapsFilter {
+    userId: ID
+    offset: Int
+    limit: Int
+}
+
+type Knot {
+    id: ID!
+    trackId: String!
+    level: Int!
+    visited: Boolean
+}
+
+input KnotInput {
+    trackId: String
+    level: Int
+    visited: Boolean
+}
+
+type Link {
+    id: ID!
+    source: ID!
+    target: ID!
+}
+
+# Queries
+type Query {
+    me: User
+
+    map(mapId: ID!): Map
+    maps(filter: MapsFilter): [Map!]!
+}
+
+# Mutations
+type Mutation {
+    getToken(app: AppType!): LinkedApp
+
+    updateUsername(newUsername: String!): User
+
+    createMap(mapInput: MapInput!): Map
+    updateMap(mapId: ID!, mapInput: MapInput!): Map
+    deleteMap(mapId: ID!): MutationResult
+
+    createKnots(mapId: ID!, newKnots: [KnotInput!]!): [Knot!]
+    updateKnot(knotId: ID!, knotInput: KnotInput!): Knot
+    deleteKnots(mapId: ID!, knotIds: [String!]!): MutationResult
+
+    createLinks(mapId: ID!, sourceId: String!, targetIds: [String!]!): [Link!]
+    deleteLinks(mapId: ID!, linkIds: [String!]!): MutationResult
+}
+
+# Enums, Result types
+enum AppType {
+    SPOTIFY
+}
+
+type MutationResult {
+    success: Boolean!
+    count: Int!
+}

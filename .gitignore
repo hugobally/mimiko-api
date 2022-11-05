@@ -1,0 +1,7 @@
+config.yml
+.idea
+mimiko-server
+backend
+server.log
+localhost.pem
+localhost-key.pem

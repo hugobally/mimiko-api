@@ -1,0 +1,62 @@
+type User {
+  id: ID! @id
+  username: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+
+  maps: [Map!]! @relation(onDelete: CASCADE)
+  linkedApps: [LinkedApp!]! @relation(onDelete: CASCADE)
+}
+
+type LinkedApp {
+  id: ID! @id
+  type: AppType!
+
+  accessToken: String
+  tokenExpiry: DateTime
+  refreshToken: String
+
+  userId: ID!
+  username: String
+
+  user: User! @relation(link: INLINE)
+}
+
+enum AppType {
+  SPOTIFY
+}
+
+type Map {
+  id: ID! @id
+
+  title: String! @default(value: "Untitled Map")
+  author: User! @relation(link: INLINE)
+  flagshipId: String
+
+  public: Boolean! @default(value: false)
+
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+
+  knots: [Knot!]! @relation(onDelete: CASCADE)
+  links: [Link!]! @relation(onDelete: CASCADE)
+}
+
+type Knot {
+  id: ID! @id
+  trackId: String!
+  level: Int!
+  visited: Boolean! @default(value: true)
+
+  map: Map! @relation(link: INLINE)
+
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Link {
+  id: ID! @id
+  map: Map! @relation(link: INLINE)
+  source: ID!
+  target: ID!
+}
