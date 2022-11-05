@@ -1,0 +1,13 @@
+  env: DEV
+  tls:
+    cert: cert.pem
+    key: key.pem
+  server:
+    host: localhost
+    port: 8081
+  spotify:
+    client_id: <replace with client id string>
+    client_secret: <replace with client secret string>
+    redirect_uri: http://localhost:8080/callback/spotify
+  auth:
+    jwt_key: bXlzZWNyZXRrZXkK

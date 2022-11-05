@@ -1,0 +1,80 @@
+type User {
+  id: ID!
+  username: String
+  maps: [Map!]!
+}
+
+type Map {
+  id: ID!
+
+  title: String!
+  flagshipID: String!
+  author: User!
+  public: Boolean!
+
+  knots: [Knot!]!
+  links: [Link!]!
+}
+
+type Knot {
+  id: ID!
+  trackId: String!
+  level: Int!
+  visited: Boolean
+  parentLinks: [Link!]!
+}
+
+type Link {
+  id: ID!
+  sourceID: ID!
+  targetID: ID!
+}
+
+type Query {
+  me: User
+
+  map(mapId: ID!): Map
+  maps(filter: MapsFilter): [Map!]!
+
+  getSpotifyToken: SpotifyAuthToken
+}
+
+type Mutation {
+  updateUsername(newUsername: String!): User
+
+  createMap(mapInput: MapInput!): Map
+  updateMap(mapId: ID!, mapInput: MapInput!): Map
+  deleteMap(mapId: ID!): MutationResult
+#  duplicateMap(mapId: ID!): Map
+
+  createKnot(mapId: ID!, knotInput: KnotInput!): Knot
+  updateKnot(knotId: ID!, knotInput: KnotInput!): Knot
+  deleteKnots(mapId: ID!, knotIds: [ID!]!): MutationResult
+}
+
+input MapInput {
+  title: String
+  public: Boolean!
+  flagshipID: String
+}
+
+input MapsFilter {
+  author: ID
+}
+
+input KnotInput {
+  trackId: String
+  level: Int
+  visited: Boolean
+  sourceId: ID
+}
+
+type MutationResult {
+  success: Boolean!
+  count: Int!
+}
+
+type SpotifyAuthToken {
+  accessToken: String!
+  tokenExpiry: String!
+}
