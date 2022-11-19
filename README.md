@@ -1,5 +1,7 @@
 -- Setup a dev server --
 
+TODO -- DEPRECATED
+
 0. Tools needed : docker, go, prisma (npm install prisma --global)
 
 1. a) Create a spotify app to obtain API credentials (https://developer.spotify.com/dashboard/)
