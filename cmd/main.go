@@ -11,7 +11,6 @@ import (
 	"github.com/hugobally/mimiko_api/internal/graph"
 	"github.com/hugobally/mimiko_api/internal/server"
 	"github.com/hugobally/mimiko_api/internal/shared"
-	"github.com/hugobally/mimiko_api/internal/static"
 	"io"
 	"log"
 	"net/http"
@@ -30,14 +29,12 @@ func initSharedServices() *shared.Services {
 	services.SetHttpClient(httpClient)
 	services.SetJwtUtil(jwt.NewJwtHandler(configInstance.Auth.JwtKey))
 	services.SetSpotify(spotify.New(configInstance, httpClient))
-
 	services.SetDatabase(db.NewClient(configInstance.Env == "DEV"))
 
 	return services
 }
 
 func main() {
-
 	services := initSharedServices()
 
 	lf, err := os.OpenFile("server.log",
@@ -46,8 +43,9 @@ func main() {
 		log.Println(err)
 	}
 	defer lf.Close()
+
 	logger := log.New(io.MultiWriter(lf, os.Stdout), "backend ", log.LstdFlags|log.Lshortfile)
-	services.SetLogger(logger) // ? does it need to be shared
+	services.SetLogger(logger)
 
 	cfg := services.Config
 
@@ -55,7 +53,6 @@ func main() {
 
 	login.NewHandler(services).SetupRoutes(mux)
 	graph.NewHandler(services).SetupRoutes(mux)
-	static.NewHandler(services).SetupRoutes(mux)
 
 	addr := fmt.Sprintf("%v:%d", cfg.Server.Host, cfg.Server.Port)
 	srv := server.New(handlers.LoggingHandler(os.Stdout, mux), addr)
@@ -67,18 +64,3 @@ func main() {
 		services.Logger.Fatalf("server failed to start: %v", err)
 	}
 }
-
-//port := os.Getenv("PORT")
-//if port == "" {
-//	port = defaultPort
-//}
-//
-//srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Root{}}))
-//
-//http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-//http.Handle("/query", srv)
-//
-//log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-//log.Fatal(http.ListenAndServe(":"+port, nil))
-//
-//
